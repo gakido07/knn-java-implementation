@@ -3,6 +3,7 @@ package org.csc.models;
 import lombok.Getter;
 import org.csc.common.Specie;
 import org.csc.common.interfaces.Flower;
+import org.javatuples.Quartet;
 
 @Getter
 public class IrisFlower extends Flower {
@@ -12,7 +13,11 @@ public class IrisFlower extends Flower {
     this.specie = specie;
   }
 
-  public double[] toVector() {
-    return new double[]{getSepal_length(), getSepal_width(), getPetal_length(), getPetal_width()};
+  public Quartet<Double, Double, Double, Double> toVector() {
+    return Quartet.with(getSepal_length(), getSepal_width(), getPetal_length(), getPetal_width());
+  }
+
+  public Double[] toVectorArray() {
+    return (Double[]) toVector().toArray();
   }
 }

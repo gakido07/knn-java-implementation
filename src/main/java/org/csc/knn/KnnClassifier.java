@@ -3,9 +3,13 @@ package org.csc.knn;
 import org.csc.loader.DatasetLoader;
 import org.csc.models.IrisFlower;
 import org.csc.models.UnknownIrisFlower;
+import org.csc.models.RelativeVectorDistance;
+
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class KnnClassifier {
   private final List<IrisFlower> dataSet = new DatasetLoader().loadIrisFLowerSet().stream().toList();
@@ -46,9 +50,29 @@ public class KnnClassifier {
     }
     return Math.sqrt(distance);
   }
-//  private double calculateEuclideanDistance(double x1, double y1, double x2, double y2) {
-//    return Math.sqrt((y2 - y1) * (y2 - y1) + (x2 - x1) * (x2 - x1));
-//  }
 
+  private List<double[]> getNearestneighbors(double[][] dataset, double[] vector, int numberOfNeighbors) {
+    List<RelativeVectorDistance> distanceToOtherVectors = new ArrayList<>();
+    for (double[] vectorInFocus : dataset) {
+      distanceToOtherVectors.add(new RelativeVectorDistance(vectorInFocus, vector, calculateEuclideanDistance(vector, vectorInFocus)));
+      distanceToOtherVectors.sort((RelativeVectorDistance vectorDistance1, RelativeVectorDistance vectorDistance2) -> {
+        return Double.valueOf(vectorDistance1.distance() - vectorDistance2.distance()).intValue();
+      });
+    }
+    List<double[]> neighbors = new ArrayList<>();
+    for (int neighborCounter = 0; neighborCounter < numberOfNeighbors; neighborCounter++) {
+      neighbors.add(distanceToOtherVectors.get(neighborCounter).vector());
+    }
+    return neighbors;
+  }
+
+  private double predictClassification(double[][] dataset, double[] vector, int numberOfNeighbors) {
+    List<double[]> neighbors = getNearestneighbors(dataset, vector, numberOfNeighbors);
+    List<Double> lastElementsOfNeighbors = neighbors.stream().map(neighbor -> neighbor[neighbor.length -1]).toList();
+    List<Double> distinctLastElementOfNeighbors = new ArrayList<>(
+        new HashSet<>(lastElementsOfNeighbors)
+    );
+    return Collections.max(distinctLastElementOfNeighbors);
+  }
 
 }
