@@ -19,7 +19,6 @@ public class CsvUtil {
         records.add(Arrays.asList(values));
       }
     } catch (Exception ignored) {
-
     }
     return records;
   }

@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class DatasetLoader {
   private final CsvUtil csvUtil = new CsvUtil();
-
+  /** This loads and transforms the data from the csv file into a collection of IrisFlowerSet Objects  */
   public Set<IrisFlower> loadIrisFLowerSet() {
     List<List<String>> irisFlowerSet = csvUtil.readCsv("/");
     return irisFlowerSet.stream().map(flower -> {
@@ -24,4 +24,5 @@ public class DatasetLoader {
       return new IrisFlower(sepal_length, sepal_width, petal_length, petal_width, specie);
     }).collect(Collectors.toSet());
   }
+
 }
